@@ -25,14 +25,6 @@ public class TrendingTopic implements Comparable<TrendingTopic>{
         return content;
     }
 
-    public Boolean getSuperTrending() {
-        return isSuperTrending;
-    }
-
-    public void setSuperTrending(Boolean superTrending) {
-        isSuperTrending = superTrending;
-    }
-
     public int getVotes() {
         return votes;
     }

@@ -26,4 +26,5 @@ public class Utilities {
     public static void sendError(String error) {
         throw new RuntimeException(error);
     }
+    
 }

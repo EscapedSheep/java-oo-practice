@@ -29,6 +29,7 @@ public class TrendingTopicRankingSystem {
         for(TrendingTopic t : topics) {
             if (t.getContent().equals(content)) topic = t;
         }
+
         if (topic == null) Utilities.sendError("没有这个热搜哦。");
         return topic;
     }

@@ -7,6 +7,7 @@ public class Admin extends User{
     private String passWord;
 
     public Admin(String name, String passWord) {
+
         super(name);
         this.passWord = passWord;
     }

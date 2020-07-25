@@ -9,6 +9,7 @@ public class NormalUser extends User{
     }
 
     public int getNumOfVotes() {
+
         return numOfVotes;
     }
 

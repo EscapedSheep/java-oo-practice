@@ -37,6 +37,11 @@ public class UserOperatingSystem {
         }
     }
 
+    public void exitSystem() {
+        Utilities.printDividedLine();
+        Utilities.print("谢谢使用");
+    }
+
     private void operatedByNormal() {
         try {
             displayNormalMenu();
