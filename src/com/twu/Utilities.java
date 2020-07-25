@@ -7,7 +7,7 @@ public class Utilities {
         if (str.matches("^[0-9]+$")) {
             return Integer.parseInt(str,10);
         }
-        throw new RuntimeException("输入不合法");
+        throw new RuntimeException("！！你的输入有误！");
     }
 
     public static String getInput() {
@@ -26,5 +26,4 @@ public class Utilities {
     public static void sendError(String error) {
         throw new RuntimeException(error);
     }
-    
 }

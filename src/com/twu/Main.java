@@ -3,9 +3,9 @@ package com.twu;
 public class Main {
 
     public static void main(String[] args) {
-        UserOperatingSystem system = new UserOperatingSystem();
+        UserOperatingSystem system = UserOperatingSystem.getInstance();
         system.login();
-        system.exitSystem();
+        system.exit();
     }
 
 }

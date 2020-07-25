@@ -2,25 +2,32 @@ package com.twu;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class TrendingTopicRankingSystem {
+    private final static TrendingTopicRankingSystem trendingTopicRankingSystem = new TrendingTopicRankingSystem();
+
     private List<TrendingTopic> topics;
 
-    public TrendingTopicRankingSystem() {
+    private TrendingTopicRankingSystem() {
         topics = new ArrayList<>();
+    }
+
+    public static TrendingTopicRankingSystem getInstance() {
+        return trendingTopicRankingSystem;
     }
 
     public void addTopic(String content) {
         checkTopicValid(content);
-        topics.add(new TrendingTopic(topics.size() + 1, content, false));
+        topics.add(new TrendingTopic(content, false));
         rankTopic();
     }
 
     public void addSuperTopic(String content) {
         checkTopicValid(content);
-        topics.add(new TrendingTopic(topics.size() + 1, content, true));
+        topics.add(new TrendingTopic(content, true));
         rankTopic();
     }
 
@@ -31,6 +38,7 @@ public class TrendingTopicRankingSystem {
         }
 
         if (topic == null) Utilities.sendError("没有这个热搜哦。");
+
         return topic;
     }
 
@@ -44,6 +52,35 @@ public class TrendingTopicRankingSystem {
         return topics;
     }
 
+    public int getTopicsNumb() {
+        return topics.size();
+    }
+
+    public void payTopic(TrendingTopic topic, int ranking, int money) {
+        //if (ranking > topics.size()) Utilities.sendError("一共也没有" + ranking +"条热搜！");
+        int currentPaid = topics.get(ranking-1).getPaid();
+        if (currentPaid > money) Utilities.sendError("这个位置已经被付了" + currentPaid +"元， 你的钱不够哦。");
+        if (currentPaid > 0) topics.remove(ranking-1);
+
+        topic.setPaid(money);
+        topic.setRanking(ranking);
+        removeTopic(topic);
+        topics.add(ranking - 1, topic);
+        rankTopic();
+    }
+
+    public int getRankingPaid(int ranking) {
+        return topics.get(ranking-1).getPaid();
+    }
+
+    private void removeTopic(TrendingTopic topic) {
+        Iterator<TrendingTopic> iterator = topics.iterator();
+        while(iterator.hasNext()) {
+            TrendingTopic t = iterator.next();
+            if (t.getContent().equals(topic.getContent())) iterator.remove();
+        }
+    }
+
     private void checkTopicValid(String content) {
         if (content.length() == 0) Utilities.sendError("热搜内容不能为空！");
         for (TrendingTopic t : topics) {
@@ -52,7 +89,22 @@ public class TrendingTopicRankingSystem {
     }
 
     private void rankTopic() {
+        List<TrendingTopic> paidTopic = new ArrayList<>();
+        Iterator<TrendingTopic> iterator = topics.iterator();
+        while(iterator.hasNext()) {
+            TrendingTopic t = iterator.next();
+            if (t.getPaid() > 0) {
+                paidTopic.add(t);
+                iterator.remove();
+            }
+        }
+
         Collections.sort(topics);
+
+        for(TrendingTopic t : paidTopic) {
+            topics.add(t.getRanking() - 1, t);
+        }
+
         AtomicInteger i = new AtomicInteger(1);
         topics.forEach(t -> t.setRanking(i.getAndIncrement()));
     }
