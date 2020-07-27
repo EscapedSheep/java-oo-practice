@@ -6,6 +6,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * Singleton system to deal with issues regarding trending topic.
+ * No display function (Do not interact with user directly).
+ */
 public class TrendingTopicRankingSystem {
     private final static TrendingTopicRankingSystem trendingTopicRankingSystem = new TrendingTopicRankingSystem();
 
@@ -56,16 +60,33 @@ public class TrendingTopicRankingSystem {
         return topics.size();
     }
 
+    /**
+     * Pay for a topic.
+     * <p> Range check has been done in UserOperatingSystem payTopic().
+     * Check if the topic has been paid in the input ranking.
+     * Check if the input ranking has been paid and how much has been paid.
+     * If the input ranking has been paid, then the topic in this ranking should be remove.
+     * if the input ranking is the last ranking, another range check should be done for index error.
+     * Then set the topic in the input ranking.
+     * </p>
+     * @param topic The topic user want to pay.
+     * @param ranking The ranking user want to pay for the topic.
+     * @param money Money to pay the ranking for the topic
+     */
     public void payTopic(TrendingTopic topic, int ranking, int money) {
         //if (ranking > topics.size()) Utilities.sendError("一共也没有" + ranking +"条热搜！");
-        int currentPaid = topics.get(ranking-1).getPaid();
-        if (currentPaid > money) Utilities.sendError("这个位置已经被付了" + currentPaid +"元， 你的钱不够哦。");
+        if (topics.get(ranking-1) == topic && topic.getPaid() > 0) Utilities.sendError(topic.getContent() + " 已经被买在这个排名啦，不能重复购买。");
+        int currentPaid = getRankingPaid(ranking);
+        if (currentPaid >= money) Utilities.sendError("这个位置已经被付了" + currentPaid +"元， 你的钱不够哦。");
         if (currentPaid > 0) topics.remove(ranking-1);
+
+        if (ranking - 1 >= getTopicsNumb()) ranking = getTopicsNumb();
 
         topic.setPaid(money);
         topic.setRanking(ranking);
         removeTopic(topic);
-        topics.add(ranking - 1, topic);
+        topics.add( ranking - 1, topic);
+
         rankTopic();
     }
 
@@ -88,6 +109,14 @@ public class TrendingTopicRankingSystem {
         }
     }
 
+    /**
+     * Rank topic in topics.
+     * <p> Remove the paid topic from topics,
+     * and store the paid topic in another list.
+     * After topics sorted, insert paid topic to topics according to the paid ranking.
+     * Finally, refresh the ranking in topics.
+     * </p>
+     */
     private void rankTopic() {
         List<TrendingTopic> paidTopic = new ArrayList<>();
         Iterator<TrendingTopic> iterator = topics.iterator();

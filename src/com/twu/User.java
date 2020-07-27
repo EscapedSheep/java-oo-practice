@@ -1,5 +1,8 @@
 package com.twu;
 
+/**
+ * Parent class for Admin and NormalUser
+ */
 public class User {
     private String name;
 

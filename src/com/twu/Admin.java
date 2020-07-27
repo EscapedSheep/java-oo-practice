@@ -1,13 +1,21 @@
 package com.twu;
 
+/**
+ * Singleton admin
+ */
 public class Admin extends User{
 
-    static String adminName = "admin";
-    static String adminPassword = "adminPassword";
+    private final static String adminName = "admin";
+    private final static String adminPassword = "adminPassword";
+    private final static Admin admin = new Admin(Admin.adminName, Admin.adminPassword);
+
     private String passWord;
 
-    public Admin(String name, String passWord) {
+    public static Admin getInstance() {
+        return admin;
+    }
 
+    private Admin(String name, String passWord) {
         super(name);
         this.passWord = passWord;
     }

@@ -1,6 +1,9 @@
 package com.twu;
 
-
+/**
+ * Singleton system to deal with issues regarding user operation.
+ * The only class interact with user.
+ */
 public class UserOperatingSystem {
     private final static UserOperatingSystem userOperationSystem = new UserOperatingSystem();
 
@@ -14,6 +17,12 @@ public class UserOperatingSystem {
         return userOperationSystem;
     }
 
+    /**
+     * Login the system.
+     * <p>Input check has been done in each sub function.
+     * If any input is invalid, system will tell the user and call login() function again.
+     * </p>
+     */
     public void login() {
         try {
             displayLogin();
@@ -56,13 +65,14 @@ public class UserOperatingSystem {
     }
 
     private void adminLogin() {
+        Admin admin = Admin.getInstance();
         Utilities.print("请输入用户名： ");
         String name = Utilities.getInput();
-        if (!name.equals(Admin.adminName)) Utilities.sendError("输入的用户名不对！");
+        if (!name.equals(admin.getName())) Utilities.sendError("输入的用户名不对！");
         Utilities.print("请输入密码： ");
         String password = Utilities.getInput();
-        if (!password.equals(Admin.adminPassword)) Utilities.sendError("输入的密码不对！");
-        user = new Admin(name, password);
+        if (!password.equals(admin.getPassWord())) Utilities.sendError("输入的密码不对！");
+        user = admin;
         operatedByAdmin();
     }
 
@@ -184,7 +194,7 @@ public class UserOperatingSystem {
     }
 
     private void displayAdminMenu() {
-        Utilities.print("你好， " + user.getName() + "你想做什么呢？");
+        Utilities.print("你好， " + user.getName() + ", 你想做什么呢？");
         Utilities.print("1. 查看热搜排行榜");
         Utilities.print("2. 添加热搜");
         Utilities.print("3. 添加超级热搜");
